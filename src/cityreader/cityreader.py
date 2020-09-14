@@ -1,34 +1,84 @@
 # Create a class to hold a city location. Call the class "City". It should have
 # fields for name, lat and lon (representing latitude and longitude).
+import pandas as pd
+
+class City:
+  def __init__(self, name, lat, lon):
+    self.name = name
+    self.lat = lat
+    self.lon = lon
 
 
-# We have a collection of US cities with population over 750,000 stored in the
-# file "cities.csv". (CSV stands for "comma-separated values".)
-#
-# In the body of the `cityreader` function, use Python's built-in "csv" module 
-# to read this file so that each record is imported into a City instance. Then
-# return the list with all the City instances from the function.
-# Google "python 3 csv" for references and use your Google-fu for other examples.
-#
-# Store the instances in the "cities" list, below.
-#
-# Note that the first line of the CSV is header that describes the fields--this
-# should not be loaded into a City object.
 cities = []
-
 def cityreader(cities=[]):
-  # TODO Implement the functionality to read from the 'cities.csv' file
-  # Ensure that the lat and lon valuse are all floats
-  # For each city record, create a new City instance and add it to the 
-  # `cities` list
-    
-    return cities
+  f = open('src/cityreader/cities.csv', 'r')
+  f.close()
 
-cityreader(cities)
+  df = pd.read_csv('src/cityreader/cities.csv')
+  cities1 = [(df.city[i], df.lat[i],df.lng[i]) for i in range(len(df.city))]
+  cities = [City(cities1[i][0], cities1[i][1], cities1[i][2]) for i in range(len(cities1))]
+  
+  return cities
 
-# Print the list of cities (name, lat, lon), 1 record per line.
-for c in cities:
-    print(c)
+
+# Get latitude and longitude values from the user
+lat1, lon1 = input("Enter Lat1, Lon1: " ).split(",")
+lat2, lon2 = input("Enter Lat2, Lon2: " ).split(",")
+lat1 = int(lat1)
+lat2 = int(lat2)
+lon1 = int(lon1)
+lon2 = int(lon2)
+
+cit = cityreader(cities)
+
+def lat_between(lat1,lat2, cit):
+  if lat1 < lat2:
+    h= []
+    for a in range(len(cit)):      
+      if lat1 < cit[a].lat < lat2:
+        h.append(cit[a].lat)
+    return h
+  else:
+    h= []
+    for a in range(len(cit)):      
+      if lat1 > cit[a].lat > lat2:
+        h.append(cit[a].lat)
+    return h
+
+
+def lon_between(lon1,lon2, cit):
+  if lon1 < lon2:
+    w= []
+    for a in range(len(cit)):      
+      if lon1 < cit[a].lon < lon2:
+        w.append(cit[a].lat)
+    return w
+  else:
+    w= []
+    for a in range(len(cit)):      
+      if lon1 > cit[a].lon > lon2:
+        w.append(cit[a].lat)
+    return w
+
+def intersection(lst1, lst2): 
+    lst3 = [value for value in lst1 if value in lst2] 
+    return lst3 
+
+latitudes = lat_between(lat1,lat2,cit)
+latitudes2 = lon_between(lon1,lon2,cit)
+
+markers = intersection(latitudes,latitudes2)
+
+def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
+  # within will hold the cities that fall within the specified region
+  within = []
+  for b in markers:
+    for a in range(len(cit)):
+      if b == cit[a].lat:
+        within.append(cit[a])
+  return within
+ 
+print(cityreader_stretch(lat1, lon1, lat2, lon2, cit))
 
 # STRETCH GOAL!
 #
@@ -59,13 +109,33 @@ for c in cities:
 # Tucson: (32.1558,-110.8777)
 # Salt Lake City: (40.7774,-111.9301)
 
-# TODO Get latitude and longitude values from the user
 
+
+# Get latitude and longitude values from the user
+lat1, lon1 = input("Enter Lat1, Lon1: " ).split(",")
+lat2, lon2 = input("Enter Lat2, Lon2: " ).split(",")
+lat1 = int(lat1)
+lat2 = int(lat2)
+lon1 = int(lon1)
+lon2 = int(lon2)
+#cit = cityreader(cities)
+'''
 def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
   # within will hold the cities that fall within the specified region
-  within = []
+  # within = []
+  for a in range(len(cit)):
+    if lon1 < lon2:
+      if lon1 < cit[a].lon < lon2:
+        print((cit[a].name, cit[a].lat, cit[a].lon))
+
+    else:
+      if lon2 < cit[a].lon <= lon1:
+        print((cit[a].name, cit[a].lat, cit[a].lon))
+
+  within = cityreader_stretch(lat1, lon1, lat2, lon2, cit)
+  return within
   
   # Go through each city and check to see if it falls within 
   # the specified coordinates.
 
-  return within
+#  return within'''
